@@ -103,7 +103,17 @@ VectorXd KalmanFilter::h(const VectorXd &x) {
         return hx;
     }
 
-    float theta = atan(py/px);
+    // check theta between -pi and pi
+    float theta = atan2(py,px);
+    while(theta >= M_PI)
+    {
+        theta -= 2*M_PI;
+    }
+    while(theta <= -M_PI)
+    {
+        theta += 2*M_PI;
+    }
+
     float rho_dot = (px*vx + py*vy) / rho;
 
 
