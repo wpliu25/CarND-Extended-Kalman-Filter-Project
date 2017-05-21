@@ -73,6 +73,13 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     * update the state by using Extended Kalman Filter equations
   */
     VectorXd y = z - h(x_);
+    // normalize phi
+    float phi = y[1];
+    if(phi >= M_PI || phi <= -M_PI)
+    {
+        phi = fmod(phi, M_PI);
+    }
+    y[1] = phi;
     MatrixXd Ht = H_.transpose();
     MatrixXd S = H_ * P_ * Ht + R_;
     MatrixXd Si = S.inverse();
@@ -105,14 +112,6 @@ VectorXd KalmanFilter::h(const VectorXd &x) {
 
     // check theta between -pi and pi
     float theta = atan2(py,px);
-    while(theta >= M_PI)
-    {
-        theta -= 2*M_PI;
-    }
-    while(theta <= -M_PI)
-    {
-        theta += 2*M_PI;
-    }
 
     float rho_dot = (px*vx + py*vy) / rho;
 
